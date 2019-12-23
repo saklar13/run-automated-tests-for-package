@@ -1,0 +1,5 @@
+click
+pydantic
+requests
+PyGithub
+-e git+https://github.com/saklar13/pip-download.git@master#egg=pip-download
