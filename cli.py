@@ -14,7 +14,7 @@ from main import main
     help='Specify as Shell names divided by ";"',
 )
 @click.option(
-    '--automation-project-name',
+    '--automation-project-name',  # fixme rename name to id
     required=True,
     help='Project id for the Automated tests',
 )
@@ -50,6 +50,7 @@ def cli(
         tc_password: str,
 ) -> bool:
     supported_shells = supported_shells.split(';')
+    package_path = package_path if isinstance(package_path, Path) else Path(package_path)
     is_success = main(
         supported_shells=supported_shells,
         automation_project_name=automation_project_name,
