@@ -1,5 +1,4 @@
-click
-pydantic
-requests
-PyGithub
+click>=7.0,<7.1
+pydantic>=1.3,<1.4
+PyGithub>=1.44,<1.45
 -e git+https://github.com/saklar13/pip-download.git@master#egg=pip-download
