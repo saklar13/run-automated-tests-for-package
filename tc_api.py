@@ -2,7 +2,7 @@ from typing import Optional, Iterator, Dict
 
 import requests
 
-from run_tests.tc_api_models import QueuedBuildDetailsModel, BuildConfOutputModel, BuildConfLocator
+from tc_api_models import QueuedBuildDetailsModel, BuildConfOutputModel, BuildConfLocator
 
 
 class TeamCityBaseError(Exception):

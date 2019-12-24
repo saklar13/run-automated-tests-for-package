@@ -5,7 +5,7 @@ from typing import List
 from github import Github
 from github.Repository import Repository
 
-from run_tests.tc_api import TeamCityAPI
+from tc_api import TeamCityAPI
 from pip_download import pip_download
 
 

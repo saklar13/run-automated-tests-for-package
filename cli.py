@@ -2,7 +2,7 @@ from pathlib import Path
 
 import click
 
-from run_tests.main import main
+from main import main
 
 
 @click.command(
