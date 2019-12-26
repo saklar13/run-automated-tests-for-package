@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 
 import click
@@ -62,6 +63,8 @@ def cli(
         tc_user=tc_user,
         tc_password=tc_password,
     )
+    if not is_success:
+        sys.exit(1)
     return is_success
 
 
