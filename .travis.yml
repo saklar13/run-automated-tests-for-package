@@ -17,7 +17,7 @@ jobs:
         provider: releases
         skip_cleanup: true
         draft: true
-        api_token:
+        api_key:
           secure: "C1X/QNs9qRkGfae6N6xKxAsNzKNi/RmbKQeDUo8WHYY7nnEa7OgwoYAX4nnZJ4DasLPXPgfMXJHE95wtuN5t8jaim8UO0XBAkPQqfAoEidbYSjk4/LeCM7d3taKGdpguYFJFdGk7H+ZcGpG5f7fDye4xnXZ4RGxIaQsJp3hPQX1C4F459RsuL3tB4uyAKQGWp0fQ95LrIx++Xc25qUddmt3O6y5srLq2KuaURvC4UShZ/yW6GsszED/r3mZyNbEFC1kb3owYcBZB74162ZXmrBNZP5Hb1jMkrpMrpRNBTdHXOsf1kyJJNIE1iChm4ag5Ebp04HHJduxG6kUnZ5cTatXDiJGjewSeb64I2fahmaoG98hCwHUqnvQ05wlBjA/CUmbfCWsL4d3DghEST9w8eiigeyKVh3GIpyNblvhnHmFsAemiYaY65HMmAm+AjWI0OQy5hiqj1oD7QDto/2FpwsSI4WwlYsjnFabc84w8IdZ21UO1STtsn7aJiFYmX4Ddtuj+ysDzAgP/XEp7i2DcdFjJY+55F9B0Zqy6v4i7vIWcgQewfdnO99lhETr3XjCDxY5x3btY+1xs27EUH7xHlOcvceqovLVtvlGr+WJqaWYxnKL3EfWcgN8rNsMGWJInwEZWzUJSsVo5IwJcoCAi6FJE0vM4GpTa5GKHlyjQcKE="
         file_glob: true
         file: dist/*
