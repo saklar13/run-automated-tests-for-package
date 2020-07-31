@@ -1,8 +1,12 @@
-from typing import Optional, Iterator, Dict
+from typing import Dict, Iterator, Optional
 
 import requests
 
-from tc_api_models import QueuedBuildDetailsModel, BuildConfOutputModel, BuildConfLocator
+from trigger_auto_tests.utils.tc_api_models import (
+    BuildConfLocator,
+    BuildConfOutputModel,
+    QueuedBuildDetailsModel,
+)
 
 
 class TeamCityBaseError(Exception):
@@ -16,27 +20,28 @@ class TeamCityRequestError(TeamCityBaseError):
 
 class TeamCityAPI:
     def __init__(self, tc_url: str, user: str, password: str):
-        self._tc_api_url = f'{tc_url}/app/rest'
+        self._tc_api_url = f"{tc_url}/app/rest"
         self._user = user
         self._password = password
 
         self._default_headers = {
-            'Content-type': 'application/json', 'Accept': 'application/json'
+            "Content-type": "application/json",
+            "Accept": "application/json",
         }
-        self._build_queue_api_url = f'{self._tc_api_url}/buildQueue'
-        self._build_template_api_url = f'{self._tc_api_url}/buildTypes'
+        self._build_queue_api_url = f"{self._tc_api_url}/buildQueue"
+        self._build_template_api_url = f"{self._tc_api_url}/buildTypes"
 
     def _request(
-            self,
-            method: str,
-            url: str,
-            headers: Optional[dict] = None,
-            data: Optional[dict] = None,
+        self,
+        method: str,
+        url: str,
+        headers: Optional[dict] = None,
+        data: Optional[dict] = None,
     ) -> dict:
         try:
-            fn = {'get': requests.get, 'post': requests.post}[method.lower()]
+            fn = {"get": requests.get, "post": requests.post}[method.lower()]
         except KeyError:
-            raise TeamCityBaseError(f'Unsupported request method {method}')
+            raise TeamCityBaseError(f"Unsupported request method {method}")
 
         headers = {**self._default_headers, **(headers or {})}
 
@@ -49,44 +54,44 @@ class TeamCityAPI:
         return resp.json()
 
     def _get(self, url: str, headers: Optional[dict] = None) -> dict:
-        return self._request('get', url, headers)
+        return self._request("get", url, headers)
 
     def _post(
-            self, url: str, headers: Optional[dict] = None, data: Optional[dict] = None
+        self, url: str, headers: Optional[dict] = None, data: Optional[dict] = None
     ) -> dict:
-        return self._request('post', url, headers, data)
+        return self._request("post", url, headers, data)
 
     def get_build_templates(
-            self, locator_data: Dict[str, str] = None, headers: Optional[dict] = None
+        self, locator_data: Dict[str, str] = None, headers: Optional[dict] = None
     ) -> Iterator[BuildConfOutputModel]:
         url = self._build_template_api_url
         if locator_data:
             locator = BuildConfLocator.parse_obj(locator_data)
-            url += f'?locator={locator}'
+            url += f"?locator={locator}"
 
         data_map = self._get(url, headers=headers)
-        return map(BuildConfOutputModel.parse_obj, data_map['buildType'])
+        return map(BuildConfOutputModel.parse_obj, data_map["buildType"])
 
     def get_triggered_build_details(
-            self, build_id: int, headers: Optional[dict] = None
+        self, build_id: int, headers: Optional[dict] = None
     ) -> QueuedBuildDetailsModel:
-        url = f'{self._build_queue_api_url}/id:{build_id}'
+        url = f"{self._build_queue_api_url}/id:{build_id}"
         data_map = self._get(url, headers=headers)
         return QueuedBuildDetailsModel.parse_obj(data_map)
 
     def trigger_builds(
-            self,
-            locator_data: dict,
-            branch: str = 'master',
-            headers: Optional[dict] = None,
-            additional_data: Optional[dict] = None,
+        self,
+        locator_data: dict,
+        branch: str = "master",
+        headers: Optional[dict] = None,
+        additional_data: Optional[dict] = None,
     ) -> QueuedBuildDetailsModel:
         # locator can include name, project, template keys it should be str type
         url = self._build_queue_api_url
         locator = BuildConfLocator.parse_obj(locator_data)
         data = {
-            'buildType': {'locator': str(locator)},
-            'branch': branch,
+            "buildType": {"locator": str(locator)},
+            "branch": branch,
             **(additional_data or {}),
         }
 

@@ -1,0 +1,46 @@
+language: python
+python: 3.7
+jobs:
+  include:
+    - env: TOXENV=build
+    - env: TOXENV=pre-commit
+    - stage: Create GitHub release
+      env: TOXENV=build
+      before_deploy:
+        - export AUTHOR_EMAIL="$(git log -1 $TRAVIS_COMMIT --pretty="%cE")"
+        - export AUTHOR_NAME="$(git log -1 $TRAVIS_COMMIT --pretty="%aN")"
+        - export GIT_TAG="$(cat version.txt | tr -d ' \t\n\r')"
+        - git config --local user.name $AUTHOR_NAME
+        - git config --local user.email $AUTHOR_EMAIL
+        - git tag $GIT_TAG
+      deploy:
+        provider: releases
+        skip_cleanup: true
+        draft: true
+        api_token:
+          secure: "C1X/QNs9qRkGfae6N6xKxAsNzKNi/RmbKQeDUo8WHYY7nnEa7OgwoYAX4nnZJ4DasLPXPgfMXJHE95wtuN5t8jaim8UO0XBAkPQqfAoEidbYSjk4/LeCM7d3taKGdpguYFJFdGk7H+ZcGpG5f7fDye4xnXZ4RGxIaQsJp3hPQX1C4F459RsuL3tB4uyAKQGWp0fQ95LrIx++Xc25qUddmt3O6y5srLq2KuaURvC4UShZ/yW6GsszED/r3mZyNbEFC1kb3owYcBZB74162ZXmrBNZP5Hb1jMkrpMrpRNBTdHXOsf1kyJJNIE1iChm4ag5Ebp04HHJduxG6kUnZ5cTatXDiJGjewSeb64I2fahmaoG98hCwHUqnvQ05wlBjA/CUmbfCWsL4d3DghEST9w8eiigeyKVh3GIpyNblvhnHmFsAemiYaY65HMmAm+AjWI0OQy5hiqj1oD7QDto/2FpwsSI4WwlYsjnFabc84w8IdZ21UO1STtsn7aJiFYmX4Ddtuj+ysDzAgP/XEp7i2DcdFjJY+55F9B0Zqy6v4i7vIWcgQewfdnO99lhETr3XjCDxY5x3btY+1xs27EUH7xHlOcvceqovLVtvlGr+WJqaWYxnKL3EfWcgN8rNsMGWJInwEZWzUJSsVo5IwJcoCAi6FJE0vM4GpTa5GKHlyjQcKE="
+        file_glob: true
+        file: dist/*
+        name: trigger-auto-tests $GIT_TAG
+        target_commitish: master
+        on:
+          branch: master
+    - stage: Check version
+      language: bash
+      install:
+        - git clone https://github.com/$TRAVIS_REPO_SLUG.git $TRAVIS_REPO_SLUG
+        - cd $TRAVIS_REPO_SLUG
+        - git checkout -qf $TRAVIS_PULL_REQUEST_BRANCH
+      script: "! git diff --exit-code --quiet origin/master version.txt"
+
+install:
+  - pip install tox
+
+script: tox
+
+stages:
+  - name: Check version
+    if: branch = master AND type = pull_request
+  - name: Test
+  - name: Create GitHub release
+    if: branch = master AND type != pull_request
