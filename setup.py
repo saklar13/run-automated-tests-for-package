@@ -13,7 +13,7 @@ setup(
     author_email="saklar13@gmail.com",
     packages=find_packages(),
     entry_points={
-        "console_scripts": ["trigger-auto-testes = trigger_auto_tests.cli:cli"]
+        "console_scripts": ["trigger-auto-tests = trigger_auto_tests.cli:cli"]
     },
     include_package_data=True,
     install_requires=read_file("requirements.txt"),
