@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import List
 
-from github import Github, Repository
+from github import Github, Repository, UnknownObjectException
 from pip_download import PipDownloader
 
 from trigger_auto_tests.utils.tc_api import TeamCityAPI
@@ -12,7 +12,10 @@ REPOS_OWNER = "QualiSystems"
 def get_file_content_from_github(
     repo_name: str, file_path: str, repo_owner: str = REPOS_OWNER
 ) -> str:
-    repo: Repository = Github().get_repo(f"{repo_owner}/{repo_name}")
+    try:
+        repo: Repository = Github().get_repo(f"{repo_owner}/{repo_name}")
+    except UnknownObjectException as e:
+        raise ValueError(f"Cannot find repo {repo_owner}/{repo_name}") from e
     return repo.get_contents(file_path, "master").decoded_content.decode()
 
 
@@ -40,8 +43,7 @@ def trigger_auto_tests_build(
     package_commit_id: str,
 ) -> int:
     locator_data = {
-        # fixme remove _COPY
-        "name": f"{shell_name}_COPY",
+        "name": shell_name,
         "project": automation_project_id,
     }
     additional_data = {
